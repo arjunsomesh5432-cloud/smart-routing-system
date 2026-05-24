@@ -60,34 +60,6 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
         setMenuAnchor(null);
     }
 
-    window.onkeydown = e => {
-        if(e.code === "ArrowRight" && !rightDown.current && !leftDown.current && (!started || animationEnded)) {
-            rightDown.current = true;
-            toggleAnimation(false, 1);
-        }
-        else if(e.code === "ArrowLeft" && !leftDown.current && !rightDown.current && animationEnded) {
-            leftDown.current = true;
-            toggleAnimation(false, -1);
-        }
-    };
-
-    window.onkeyup = e => {
-        if(e.code === "Escape") setCinematic(false);
-        else if(e.code === "Space") {
-            e.preventDefault();
-            handlePlay();
-        }
-        else if(e.code === "ArrowRight" && rightDown.current) {
-            rightDown.current = false;
-            toggleAnimation(false, 1);
-        }
-        else if(e.code === "ArrowLeft" && animationEnded && leftDown.current) {
-            leftDown.current = false;
-            toggleAnimation(false, 1);
-        }
-        else if(e.code === "KeyR" && (animationEnded || !started)) clearPath();
-    };
-
     // Show cinematic mode helper
     useEffect(() => {
         if(!cinematic) return;
@@ -102,6 +74,50 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
         setShowTutorial(true);
         localStorage.setItem("path_sawtutorial", true);
     }, []);
+
+    // Keyboard shortcuts — use addEventListener so handler is properly cleaned up
+    // and not reassigned on every render, preventing stale closure accumulation.
+    useEffect(() => {
+        const onKeyDown = e => {
+            if(e.code === "ArrowRight" && !rightDown.current && !leftDown.current && (!started || animationEnded)) {
+                rightDown.current = true;
+                toggleAnimation(false, 1);
+            }
+            else if(e.code === "ArrowLeft" && !leftDown.current && !rightDown.current && animationEnded) {
+                leftDown.current = true;
+                toggleAnimation(false, -1);
+            }
+        };
+
+        const onKeyUp = e => {
+            if(e.code === "Escape") setCinematic(false);
+            else if(e.code === "Space") {
+                e.preventDefault();
+                if(!canStart) return;
+                if(!started && time === 0) {
+                    startPathfinding();
+                    return;
+                }
+                toggleAnimation();
+            }
+            else if(e.code === "ArrowRight" && rightDown.current) {
+                rightDown.current = false;
+                toggleAnimation(false, 1);
+            }
+            else if(e.code === "ArrowLeft" && animationEnded && leftDown.current) {
+                leftDown.current = false;
+                toggleAnimation(false, 1);
+            }
+            else if(e.code === "KeyR" && (animationEnded || !started)) clearPath();
+        };
+
+        window.addEventListener("keydown", onKeyDown);
+        window.addEventListener("keyup", onKeyUp);
+        return () => {
+            window.removeEventListener("keydown", onKeyDown);
+            window.removeEventListener("keyup", onKeyUp);
+        };
+    }, [started, animationEnded, toggleAnimation, setCinematic, clearPath, canStart, startPathfinding, time]);
 
     return (
         <>
@@ -259,24 +275,26 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
             >
                 <div className="sidebar-container">
 
-                    <FormControl variant="filled">
-                        <InputLabel style={{ fontSize: 14 }} id="algo-select">Algorithm</InputLabel>
-                        <Select
-                            labelId="algo-select"
-                            value={settings.algorithm}
-                            onChange={e => {changeAlgorithm(e.target.value);}}
-                            required
-                            style={{ backgroundColor: "#404156", color: "#fff", width: "100%", paddingLeft: 1 }}
-                            inputProps={{MenuProps: {MenuListProps: {sx: {backgroundColor: "#404156"}}}}}
-                            size="small"
-                            disabled={!animationEnded && started}
-                        >
-                            <MenuItem value={"astar"}>A* algorithm</MenuItem>
-                            <MenuItem value={"greedy"}>Greedy algorithm</MenuItem>
-                            <MenuItem value={"dijkstra"}>Dijkstra&apos;s algorithm</MenuItem>
-                            <MenuItem value={"bidirectional"}>Bidirectional Search algorithm</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <div>
+                        <p className="sidebar-section-label">Algorithm</p>
+                        <div className="algo-btn-group">
+                            {[
+                                { value: "astar",         label: "A* Algorithm" },
+                                { value: "greedy",        label: "Greedy Algorithm" },
+                                { value: "dijkstra",      label: "Dijkstra's Algorithm" },
+                                { value: "bidirectional", label: "Bidirectional Search" },
+                            ].map(({ value, label }) => (
+                                <button
+                                    key={value}
+                                    className={`algo-btn${settings.algorithm === value ? " algo-btn--active" : ""}`}
+                                    onClick={() => { changeAlgorithm(value); }}
+                                    disabled={!animationEnded && started}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
                     <div>
                         <Button

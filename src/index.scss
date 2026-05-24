@@ -162,13 +162,64 @@ canvas {
     flex-direction: column;
     min-width: 290px;
     padding: 25px;
-    background: linear-gradient(180deg, #2A2B37 0%, #1F2029 100%);
-    box-shadow: 7px 0px 20px 0px rgba(0, 0, 0, 0.25);
+    background: rgba(13, 17, 23, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0 16px 16px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     gap: 20px;
     flex-basis: 100%;
 
     button {
         width: 100%;
+    }
+
+    .sidebar-section-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.35);
+        margin-bottom: 4px;
+    }
+
+    .algo-btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .algo-btn {
+        width: 100%;
+        padding: 9px 18px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 999px;
+        color: #6B7280;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover:not(:disabled):not(.algo-btn--active) {
+            background: rgba(124, 58, 237, 0.08);
+            border-color: rgba(124, 58, 237, 0.4);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        &.algo-btn--active {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: #7C3AED;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
+        }
+
+        &:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
     }
 }
 
@@ -221,28 +272,7 @@ canvas {
     }
 }
 
-.github-corner {
-    z-index: 5000; 
-    position: absolute; 
-    top: 0; 
-    right: 0;
-    border: 0;
-    transition: transform 500ms ease-out, opacity 300ms ease-in;
-    
-    svg {
-        color: #fff;
-    }
-
-    .octo-arm {
-        transform-origin: 130px 106px;
-    }
-
-    &.cinematic {
-        transform: translate(200%, -200%);
-        opacity: 0;
-        pointer-events: none;
-    }
-}
+/* .github-corner removed — element no longer rendered */
 
 .cinematic-alert {
     text-align: center;
@@ -365,3 +395,140 @@ canvas {
         color: #fff;
     }
 }
+
+/* ── ResultsCard ──────────────────────────────────────── */
+.results-card {
+    position: fixed;
+    bottom: 32px;
+    left: 24px;
+    z-index: 1000;
+    min-width: 240px;
+    max-width: 280px;
+
+    background: rgba(13, 17, 23, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid #7C3AED;
+    border-radius: 16px;
+    box-shadow:
+        0 0 0 1px rgba(124, 58, 237, 0.15),
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 0 24px rgba(124, 58, 237, 0.12);
+    padding: 18px 20px;
+    color: #fff;
+
+    animation: results-fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+
+    &__icon {
+        color: #7C3AED;
+        font-size: 14px;
+        line-height: 1;
+    }
+
+    &__title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #7C3AED;
+    }
+
+    &__algo {
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 14px;
+    }
+
+    &__divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.07);
+        margin-bottom: 14px;
+    }
+
+    &__stats {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    &__stat {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    &__stat-icon {
+        font-size: 15px;
+        color: #7C3AED;
+        margin-top: 1px;
+        flex-shrink: 0;
+        width: 18px;
+        text-align: center;
+    }
+
+    &__stat-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    &__stat-label {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        font-weight: 600;
+    }
+
+    &__stat-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.2;
+    }
+
+    &__stat-sub {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.3);
+        margin-top: 1px;
+    }
+}
+
+@keyframes results-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0D1117;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7C3AED, #06B6D4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9D5CF6, #22D3EE);
+}
+::-webkit-scrollbar-corner {
+  background: #0D1117;
+}
