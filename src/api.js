@@ -16,6 +16,10 @@ export function fetchOverpassData(boundingBox) {
 
     return fetch("https://overpass-api.de/api/interpreter", {
         method: "POST",
-        body: query
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json"
+        },
+        body: "data=" + encodeURIComponent(query)
     });
 }
