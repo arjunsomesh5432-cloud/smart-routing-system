@@ -14,12 +14,15 @@ export function fetchOverpassData(boundingBox) {
     );
     out skel;`;
 
-    return fetch("https://overpass-api.de/api/interpreter", {
-        method: "POST",
+    const encodedQuery = encodeURIComponent(query);
+    
+    return fetch(
+      `https://overpass-api.de/api/interpreter?data=${encodedQuery}`,
+      {
+        method: "GET",
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Accept": "application/json"
-        },
-        body: "data=" + encodeURIComponent(query)
-    });
+          "Accept": "application/json"
+        }
+      }
+    );
 }
