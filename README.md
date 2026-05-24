@@ -1,5 +1,5 @@
-<h1>Map Pathfinding Visualizer</h1>
-<p>Pathfinding algorithms visualized on a real map. Anywhere in the world.</p>
+<h1>Smart Routing System</h1>
+<p>Smart routing algorithms visualized on a real map. Anywhere in the world.</p>
 
 <p align="center">
   <img alt="GitHub" src="https://img.shields.io/github/license/honzaap/Pathfinding"/>

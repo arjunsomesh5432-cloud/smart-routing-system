@@ -177,7 +177,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
 
             <div className="mobile-controls">
                 <Button onClick={() => {setPlaceEnd(!placeEnd);}} style={{ color: "#fff", backgroundColor: "#404156", paddingInline: 30, paddingBlock: 7 }} variant="contained">
-                    {placeEnd ? "placing end node" : "placing start node"}
+                    {placeEnd ? "placing destination node" : "placing source node"}
                 </Button>
             </div>
 
@@ -199,14 +199,14 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                         </Step>
                     </Stepper>
                     <div className="content">
-                        <h1>Map Pathfinding Visualizer</h1>
+                        <h1>Smart Routing System</h1>
                         {activeStep === 0 && <div>
                             <p>
                                 <b>Controls:</b> <br/>
-                                <b>Left button:</b> Place start node <br/>
-                                <b>Right button:</b> Place end node <br/>
+                                <b>Left button:</b> Place source node <br/>
+                                <b>Right button:</b> Place destination node <br/>
                             </p>
-                            <p>The end node must be placed within the shown radius.</p>
+                            <p>The destination node must be placed within the shown radius.</p>
                             <video className="video" autoPlay muted loop>
                                 <source src="./videos/tutorial1.mp4" type="video/mp4"/>
                             </video>
@@ -348,7 +348,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                         
                         <div>
                             <Typography id="start-fill-label" >
-                                Start node fill color
+                                Source node fill color
                             </Typography>
                             <div className="color-container">
                                 <MuiColorInput value={arrayToRgb(colors.startNodeFill)} onChange={v => {setColors({...colors, startNodeFill: rgbToArray(v)});}} aria-labelledby="start-fill-label" style={{ backgroundColor: "#404156" }} />
@@ -360,7 +360,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
 
                         <div>
                             <Typography id="start-border-label" >
-                                Start node border color
+                                Source node border color
                             </Typography>
                             <div className="color-container">
                                 <MuiColorInput value={arrayToRgb(colors.startNodeBorder)} onChange={v => {setColors({...colors, startNodeBorder: rgbToArray(v)});}} aria-labelledby="start-border-label" style={{ backgroundColor: "#404156" }} />
@@ -372,7 +372,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
 
                         <div>
                             <Typography id="end-fill-label" >
-                                End node fill color
+                                Destination node fill color
                             </Typography>
                             <div className="color-container">
                                 <MuiColorInput value={arrayToRgb(colors.endNodeFill)} onChange={v => {setColors({...colors, endNodeFill: rgbToArray(v)});}} aria-labelledby="end-fill-label" style={{ backgroundColor: "#404156" }} />
@@ -384,7 +384,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
 
                         <div>
                             <Typography id="end-border-label" >
-                                End node border color
+                                Destination node border color
                             </Typography>
                             <div className="color-container">
                                 <MuiColorInput value={arrayToRgb(colors.endNodeBorder)} onChange={v => {setColors({...colors, endNodeBorder: rgbToArray(v)});}} aria-labelledby="end-border-label" style={{ backgroundColor: "#404156" }} />
