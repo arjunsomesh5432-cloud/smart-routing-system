@@ -1,6 +1,6 @@
-import { Button, IconButton, Typography, Snackbar, Alert, CircularProgress, Fade, Tooltip, Drawer, MenuItem, Select, InputLabel, FormControl, Menu, Backdrop, Stepper, Step, StepLabel } from "@mui/material";
+import { Button, IconButton, Typography, Snackbar, Alert, CircularProgress, Fade, Tooltip, Drawer, MenuItem, Select, InputLabel, FormControl, Menu, Backdrop, Stepper, Step, StepLabel, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
-import { PlayArrow, Settings, Movie, Pause, Replay } from "@mui/icons-material";
+import { PlayArrow, Settings, Movie, Pause, Replay, ExpandMore } from "@mui/icons-material";
 import Slider from "./Slider";
 import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import { INITIAL_COLORS, LOCATIONS } from "../config";
@@ -28,9 +28,9 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
             setSnack({ open: true, message, type });
         },
     }));
-      
+
     function closeSnack() {
-        setSnack({...snack, open: false});
+        setSnack({ ...snack, open: false });
     }
 
     function closeHelper() {
@@ -38,31 +38,31 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
     }
 
     function handleTutorialChange(direction) {
-        if(activeStep >= 2 && direction > 0) {
+        if (activeStep >= 2 && direction > 0) {
             setShowTutorial(false);
             return;
         }
-        
+
         setActiveStep(Math.max(activeStep + direction, 0));
     }
 
     // Start pathfinding or toggle playback
     function handlePlay() {
-        if(!canStart) return;
-        if(!started && time === 0) {
+        if (!canStart) return;
+        if (!started && time === 0) {
             startPathfinding();
             return;
         }
         toggleAnimation();
     }
-    
+
     function closeMenu() {
         setMenuAnchor(null);
     }
 
     // Show cinematic mode helper
     useEffect(() => {
-        if(!cinematic) return;
+        if (!cinematic) return;
         setHelper(true);
         setTimeout(() => {
             helperTime.current = 2500;
@@ -70,7 +70,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
     }, [cinematic]);
 
     useEffect(() => {
-        if(localStorage.getItem("path_sawtutorial")) return;
+        if (localStorage.getItem("path_sawtutorial")) return;
         setShowTutorial(true);
         localStorage.setItem("path_sawtutorial", true);
     }, []);
@@ -79,36 +79,36 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
     // and not reassigned on every render, preventing stale closure accumulation.
     useEffect(() => {
         const onKeyDown = e => {
-            if(e.code === "ArrowRight" && !rightDown.current && !leftDown.current && (!started || animationEnded)) {
+            if (e.code === "ArrowRight" && !rightDown.current && !leftDown.current && (!started || animationEnded)) {
                 rightDown.current = true;
                 toggleAnimation(false, 1);
             }
-            else if(e.code === "ArrowLeft" && !leftDown.current && !rightDown.current && animationEnded) {
+            else if (e.code === "ArrowLeft" && !leftDown.current && !rightDown.current && animationEnded) {
                 leftDown.current = true;
                 toggleAnimation(false, -1);
             }
         };
 
         const onKeyUp = e => {
-            if(e.code === "Escape") setCinematic(false);
-            else if(e.code === "Space") {
+            if (e.code === "Escape") setCinematic(false);
+            else if (e.code === "Space") {
                 e.preventDefault();
-                if(!canStart) return;
-                if(!started && time === 0) {
+                if (!canStart) return;
+                if (!started && time === 0) {
                     startPathfinding();
                     return;
                 }
                 toggleAnimation();
             }
-            else if(e.code === "ArrowRight" && rightDown.current) {
+            else if (e.code === "ArrowRight" && rightDown.current) {
                 rightDown.current = false;
                 toggleAnimation(false, 1);
             }
-            else if(e.code === "ArrowLeft" && animationEnded && leftDown.current) {
+            else if (e.code === "ArrowLeft" && animationEnded && leftDown.current) {
                 leftDown.current = false;
                 toggleAnimation(false, 1);
             }
-            else if(e.code === "KeyR" && (animationEnded || !started)) clearPath();
+            else if (e.code === "KeyR" && (animationEnded || !started)) clearPath();
         };
 
         window.addEventListener("keydown", onKeyDown);
@@ -126,10 +126,10 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                     <Typography id="playback-slider" gutterBottom>
                         Animation playback
                     </Typography>
-                    <Slider disabled={!animationEnded}  value={animationEnded ? time : maxTime} min={animationEnded ? 0 : -1} max={maxTime} onChange={(e) => {timeChanged(Number(e.target.value));}} className="slider" aria-labelledby="playback-slider" />
+                    <Slider disabled={!animationEnded} value={animationEnded ? time : maxTime} min={animationEnded ? 0 : -1} max={maxTime} onChange={(e) => { timeChanged(Number(e.target.value)); }} className="slider" aria-labelledby="playback-slider" />
                 </div>
                 <IconButton disabled={!canStart} onClick={handlePlay} style={{ backgroundColor: "#46B780", width: 60, height: 60 }} size="large">
-                    {(!started || animationEnded && !playbackOn) 
+                    {(!started || animationEnded && !playbackOn)
                         ? <PlayArrow style={{ color: "#fff", width: 26, height: 26 }} fontSize="inherit" />
                         : <Pause style={{ color: "#fff", width: 26, height: 26 }} fontSize="inherit" />
                     }
@@ -141,12 +141,12 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
 
             <div className={`nav-right ${cinematic ? "cinematic" : ""}`}>
                 <Tooltip title="Open settings">
-                    <IconButton onClick={() => {setSidebar(true);}} style={{ backgroundColor: "#2A2B37", width: 36, height: 36 }} size="large">
+                    <IconButton onClick={() => { setSidebar(true); }} style={{ backgroundColor: "#2A2B37", width: 36, height: 36 }} size="large">
                         <Settings style={{ color: "#fff", width: 24, height: 24 }} fontSize="inherit" />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Cinematic mode">
-                    <IconButton className="btn-cinematic" onClick={() => {setCinematic(!cinematic);}} style={{ backgroundColor: "#2A2B37", width: 36, height: 36 }} size="large">
+                    <IconButton className="btn-cinematic" onClick={() => { setCinematic(!cinematic); }} style={{ backgroundColor: "#2A2B37", width: 36, height: 36 }} size="large">
                         <Movie style={{ color: "#fff", width: 24, height: 24 }} fontSize="inherit" />
                     </IconButton>
                 </Tooltip>
@@ -164,24 +164,24 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                 </Fade>
             </div>
 
-            <Snackbar 
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }} 
-                open={snack.open} 
-                autoHideDuration={4000} 
+            <Snackbar
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                open={snack.open}
+                autoHideDuration={4000}
                 onClose={closeSnack}>
-                <Alert 
-                    onClose={closeSnack} 
-                    severity={snack.type} 
+                <Alert
+                    onClose={closeSnack}
+                    severity={snack.type}
                     style={{ width: "100%", color: "#fff" }}
                 >
                     {snack.message}
                 </Alert>
             </Snackbar>
 
-            <Snackbar 
-                anchorOrigin={{ vertical: "top", horizontal: "center" }} 
-                open={helper} 
-                autoHideDuration={helperTime.current} 
+            <Snackbar
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                open={helper}
+                autoHideDuration={helperTime.current}
                 onClose={closeHelper}
             >
                 <div className="cinematic-alert">
@@ -192,14 +192,14 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
             </Snackbar>
 
             <div className="mobile-controls">
-                <Button onClick={() => {setPlaceEnd(!placeEnd);}} style={{ color: "#fff", backgroundColor: "#404156", paddingInline: 30, paddingBlock: 7 }} variant="contained">
+                <Button onClick={() => { setPlaceEnd(!placeEnd); }} style={{ color: "#fff", backgroundColor: "#404156", paddingInline: 30, paddingBlock: 7 }} variant="contained">
                     {placeEnd ? "placing destination node" : "placing source node"}
                 </Button>
             </div>
 
             <Backdrop
                 open={showTutorial}
-                onClick={e => {if(e.target.classList.contains("backdrop")) setShowTutorial(false);}}
+                onClick={e => { if (e.target.classList.contains("backdrop")) setShowTutorial(false); }}
                 className="backdrop"
             >
                 <div className="tutorial-container">
@@ -218,47 +218,47 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                         <h1>Smart Routing System</h1>
                         {activeStep === 0 && <div>
                             <p>
-                                <b>Controls:</b> <br/>
-                                <b>Left button:</b> Place source node <br/>
-                                <b>Right button:</b> Place destination node <br/>
+                                <b>Controls:</b> <br />
+                                <b>Left button:</b> Place source node <br />
+                                <b>Right button:</b> Place destination node <br />
                             </p>
                             <p>The destination node must be placed within the shown radius.</p>
                             <video className="video" autoPlay muted loop>
-                                <source src="./videos/tutorial1.mp4" type="video/mp4"/>
+                                <source src="./videos/tutorial1.mp4" type="video/mp4" />
                             </video>
                         </div>}
                         {activeStep === 1 && <div>
                             <p>
-                                To start the visualization, press the <b>Start Button</b> or press <b>Space</b>.<br/>
+                                To start the visualization, press the <b>Start Button</b> or press <b>Space</b>.<br />
                                 A playback feature is available after the algorithm ends.
                             </p>
                             <video className="video" autoPlay muted loop>
-                                <source src="./videos/tutorial2.mp4" type="video/mp4"/>
+                                <source src="./videos/tutorial2.mp4" type="video/mp4" />
                             </video>
                         </div>}
                         {activeStep === 2 && <div>
                             <p>
-                                You can customize the settings of the animation in the <b>Settings Sidebar</b>. <br/>
-                                Try to keep the area radius only as large as you need it to be. <br/>
+                                You can customize the settings of the animation in the <b>Settings Sidebar</b>. <br />
+                                Try to keep the area radius only as large as you need it to be. <br />
                                 Anything above <b>10km</b> is considered experimental, if you run into performance issues, stop the animation and clear the path.
                             </p>
                             <video className="video" autoPlay muted loop>
-                                <source src="./videos/tutorial3.mp4" type="video/mp4"/>
+                                <source src="./videos/tutorial3.mp4" type="video/mp4" />
                             </video>
                         </div>}
                     </div>
                     <div className="controls">
-                        <Button onClick={() => {setShowTutorial(false);}}
+                        <Button onClick={() => { setShowTutorial(false); }}
                             className="close" variant="outlined" style={{ borderColor: "#9f9f9f", color: "#9f9f9f", paddingInline: 15 }}
                         >
                             Close
                         </Button>
-                        <Button onClick={() => {handleTutorialChange(-1);}}
+                        <Button onClick={() => { handleTutorialChange(-1); }}
                             variant="outlined" style={{ borderColor: "#9f9f9f", color: "#9f9f9f", paddingInline: 18 }}
                         >
-                                Back
+                            Back
                         </Button>
-                        <Button onClick={() => {handleTutorialChange(1);}}
+                        <Button onClick={() => { handleTutorialChange(1); }}
                             variant="contained" style={{ backgroundColor: "#46B780", color: "#fff", paddingInline: 30, fontWeight: "bold" }}
                         >
                             {activeStep >= 2 ? "Finish" : "Next"}
@@ -271,7 +271,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                 className={`side-drawer ${cinematic ? "cinematic" : ""}`}
                 anchor="left"
                 open={sidebar}
-                onClose={() => {setSidebar(false);}}
+                onClose={() => { setSidebar(false); }}
             >
                 <div className="sidebar-container">
 
@@ -279,9 +279,9 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                         <p className="sidebar-section-label">Algorithm</p>
                         <div className="algo-btn-group">
                             {[
-                                { value: "astar",         label: "A* Algorithm" },
-                                { value: "greedy",        label: "Greedy Algorithm" },
-                                { value: "dijkstra",      label: "Dijkstra's Algorithm" },
+                                { value: "astar", label: "A* Algorithm" },
+                                { value: "greedy", label: "Greedy Algorithm" },
+                                { value: "dijkstra", label: "Dijkstra's Algorithm" },
                                 { value: "bidirectional", label: "Bidirectional Search" },
                             ].map(({ value, label }) => (
                                 <button
@@ -302,7 +302,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                             aria-controls={menuOpen ? "locations-menu" : undefined}
                             aria-haspopup="true"
                             aria-expanded={menuOpen ? "true" : undefined}
-                            onClick={(e) => {setMenuAnchor(e.currentTarget);}}
+                            onClick={(e) => { setMenuAnchor(e.currentTarget); }}
                             variant="contained"
                             disableElevation
                             style={{ backgroundColor: "#404156", color: "#fff", textTransform: "none", fontSize: 16, paddingBlock: 8, justifyContent: "start" }}
@@ -313,7 +313,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                             id="locations-menu"
                             anchorEl={menuAnchor}
                             open={menuOpen}
-                            onClose={() => {setMenuAnchor(null);}}
+                            onClose={() => { setMenuAnchor(null); }}
                             MenuListProps={{
                                 "aria-labelledby": "locations-button",
                                 sx: {
@@ -325,7 +325,7 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                                 horizontal: "right",
                             }}
                         >
-                            {LOCATIONS.map(location => 
+                            {LOCATIONS.map(location =>
                                 <MenuItem key={location.name} onClick={() => {
                                     closeMenu();
                                     changeLocation(location);
@@ -335,131 +335,139 @@ const Interface = forwardRef(({ canStart, started, animationEnded, playbackOn, t
                     </div>
 
                     <div className="side slider-container">
-                        <Typography id="area-slider" >
-                            Area radius: {settings.radius}km ({(settings.radius / 1.609).toFixed(1)}mi)
-                        </Typography>
-                        <Slider disabled={started && !animationEnded} min={2} max={20} step={1} value={settings.radius} onChangeCommited={() => { changeRadius(settings.radius); }} onChange={e => { setSettings({...settings, radius: Number(e.target.value)}); }} className="slider" aria-labelledby="area-slider" style={{ marginBottom: 1 }} 
-                            marks={[
-                                {
-                                    value: 2,
-                                    label: "2km"
-                                },
-                                {
-                                    value: 20,
-                                    label: "20km"
-                                }
-                            ]} 
-                        />
-                    </div>
-
-                    <div className="side slider-container">
                         <Typography id="speed-slider" >
                             Animation speed
                         </Typography>
-                        <Slider min={1} max={30} value={settings.speed} onChange={e => { setSettings({...settings, speed: Number(e.target.value)}); }} className="slider" aria-labelledby="speed-slider" style={{ marginBottom: 1 }} />
+                        <Slider min={1} max={30} value={settings.speed} onChange={e => { setSettings({ ...settings, speed: Number(e.target.value) }); }} className="slider" aria-labelledby="speed-slider" style={{ marginBottom: 1 }} />
                     </div>
 
-                    <div className="styles-container">
-                        <Typography style={{ color: "#A8AFB3", textTransform: "uppercase", fontSize: 14 }} >
-                            Styles
-                        </Typography>
-                        
-                        <div>
-                            <Typography id="start-fill-label" >
-                                Source node fill color
+                    <Accordion className="advanced-settings-accordion" style={{ backgroundColor: "transparent", color: "#fff", boxShadow: "none" }} disableGutters sx={{ '&::before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ExpandMore style={{ color: "#6B7280" }} />} style={{ padding: 0, minHeight: "unset" }} sx={{ '& .MuiAccordionSummary-content': { margin: "10px 0" } }}>
+                            <Typography className="advanced-settings-title">
+                                ADVANCED SETTINGS
                             </Typography>
-                            <div className="color-container">
-                                <MuiColorInput value={arrayToRgb(colors.startNodeFill)} onChange={v => {setColors({...colors, startNodeFill: rgbToArray(v)});}} aria-labelledby="start-fill-label" style={{ backgroundColor: "#404156" }} />
-                                <IconButton onClick={() => {setColors({...colors, startNodeFill: INITIAL_COLORS.startNodeFill});}} style={{ backgroundColor: "transparent" }} size="small">
-                                    <Replay style={{ color: "#fff", width: 20, height: 20 }} fontSize="inherit" />
-                                </IconButton>
+                        </AccordionSummary>
+                        <AccordionDetails style={{ padding: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
+
+                            <div className="side slider-container custom-slider-container">
+                                <Typography id="area-slider" className="slider-label">
+                                    Area radius: {settings.radius}km ({(settings.radius / 1.609).toFixed(1)}mi)
+                                </Typography>
+                                <Slider disabled={started && !animationEnded} min={2} max={20} step={1} value={settings.radius} onChangeCommited={() => { changeRadius(settings.radius); }} onChange={e => { setSettings({ ...settings, radius: Number(e.target.value) }); }} className="slider custom-slider" aria-labelledby="area-slider" style={{ marginBottom: 1 }}
+                                    marks={[
+                                        {
+                                            value: 2,
+                                            label: "2km"
+                                        },
+                                        {
+                                            value: 20,
+                                            label: "20km"
+                                        }
+                                    ]}
+                                />
                             </div>
-                        </div>
 
-                        <div>
-                            <Typography id="start-border-label" >
-                                Source node border color
-                            </Typography>
-                            <div className="color-container">
-                                <MuiColorInput value={arrayToRgb(colors.startNodeBorder)} onChange={v => {setColors({...colors, startNodeBorder: rgbToArray(v)});}} aria-labelledby="start-border-label" style={{ backgroundColor: "#404156" }} />
-                                <IconButton onClick={() => {setColors({...colors, startNodeBorder: INITIAL_COLORS.startNodeBorder});}} style={{ backgroundColor: "transparent" }} size="small">
-                                    <Replay style={{ color: "#fff", width: 20, height: 20 }} fontSize="inherit" />
-                                </IconButton>
+                            <div className="styles-container">
+                                <Typography className="sub-header">
+                                    STYLES
+                                </Typography>
+
+                                <div className="color-picker-row">
+                                    <Typography id="start-fill-label" className="color-picker-label">
+                                        Source node fill color
+                                    </Typography>
+                                    <div className="color-container">
+                                        <MuiColorInput className="color-picker-input" value={arrayToRgb(colors.startNodeFill)} onChange={v => { setColors({ ...colors, startNodeFill: rgbToArray(v) }); }} aria-labelledby="start-fill-label" />
+                                        <IconButton className="reset-btn" onClick={() => { setColors({ ...colors, startNodeFill: INITIAL_COLORS.startNodeFill }); }} size="small">
+                                            <Replay fontSize="inherit" />
+                                        </IconButton>
+                                    </div>
+                                </div>
+
+                                <div className="color-picker-row">
+                                    <Typography id="start-border-label" className="color-picker-label">
+                                        Source node border color
+                                    </Typography>
+                                    <div className="color-container">
+                                        <MuiColorInput className="color-picker-input" value={arrayToRgb(colors.startNodeBorder)} onChange={v => { setColors({ ...colors, startNodeBorder: rgbToArray(v) }); }} aria-labelledby="start-border-label" />
+                                        <IconButton className="reset-btn" onClick={() => { setColors({ ...colors, startNodeBorder: INITIAL_COLORS.startNodeBorder }); }} size="small">
+                                            <Replay fontSize="inherit" />
+                                        </IconButton>
+                                    </div>
+                                </div>
+
+                                <div className="color-picker-row">
+                                    <Typography id="end-fill-label" className="color-picker-label">
+                                        Destination node fill color
+                                    </Typography>
+                                    <div className="color-container">
+                                        <MuiColorInput className="color-picker-input" value={arrayToRgb(colors.endNodeFill)} onChange={v => { setColors({ ...colors, endNodeFill: rgbToArray(v) }); }} aria-labelledby="end-fill-label" />
+                                        <IconButton className="reset-btn" onClick={() => { setColors({ ...colors, endNodeFill: INITIAL_COLORS.endNodeFill }); }} size="small">
+                                            <Replay fontSize="inherit" />
+                                        </IconButton>
+                                    </div>
+                                </div>
+
+                                <div className="color-picker-row">
+                                    <Typography id="end-border-label" className="color-picker-label">
+                                        Destination node border color
+                                    </Typography>
+                                    <div className="color-container">
+                                        <MuiColorInput className="color-picker-input" value={arrayToRgb(colors.endNodeBorder)} onChange={v => { setColors({ ...colors, endNodeBorder: rgbToArray(v) }); }} aria-labelledby="end-border-label" />
+                                        <IconButton className="reset-btn" onClick={() => { setColors({ ...colors, endNodeBorder: INITIAL_COLORS.endNodeBorder }); }} size="small">
+                                            <Replay fontSize="inherit" />
+                                        </IconButton>
+                                    </div>
+                                </div>
+
+                                <div className="color-picker-row">
+                                    <Typography id="path-label" className="color-picker-label">
+                                        Path color
+                                    </Typography>
+                                    <div className="color-container">
+                                        <MuiColorInput className="color-picker-input" value={arrayToRgb(colors.path)} onChange={v => { setColors({ ...colors, path: rgbToArray(v) }); }} aria-labelledby="path-label" />
+                                        <IconButton className="reset-btn" onClick={() => { setColors({ ...colors, path: INITIAL_COLORS.path }); }} size="small">
+                                            <Replay fontSize="inherit" />
+                                        </IconButton>
+                                    </div>
+                                </div>
+
+                                <div className="color-picker-row">
+                                    <Typography id="route-label" className="color-picker-label">
+                                        Shortest route color
+                                    </Typography>
+                                    <div className="color-container">
+                                        <MuiColorInput className="color-picker-input" value={arrayToRgb(colors.route)} onChange={v => { setColors({ ...colors, route: rgbToArray(v) }); }} aria-labelledby="route-label" />
+                                        <IconButton className="reset-btn" onClick={() => { setColors({ ...colors, route: INITIAL_COLORS.route }); }} size="small">
+                                            <Replay fontSize="inherit" />
+                                        </IconButton>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <Typography id="end-fill-label" >
-                                Destination node fill color
-                            </Typography>
-                            <div className="color-container">
-                                <MuiColorInput value={arrayToRgb(colors.endNodeFill)} onChange={v => {setColors({...colors, endNodeFill: rgbToArray(v)});}} aria-labelledby="end-fill-label" style={{ backgroundColor: "#404156" }} />
-                                <IconButton onClick={() => {setColors({...colors, endNodeFill: INITIAL_COLORS.endNodeFill});}} style={{ backgroundColor: "transparent" }} size="small">
-                                    <Replay style={{ color: "#fff", width: 20, height: 20 }} fontSize="inherit" />
-                                </IconButton>
+                            <div className="shortcuts-container">
+                                <Typography className="sub-header">
+                                    SHORTCUTS
+                                </Typography>
+
+                                <div className="shortcut">
+                                    <p className="key-badge">SPACE</p>
+                                    <p>Start/Stop animation</p>
+                                </div>
+                                <div className="shortcut">
+                                    <p className="key-badge">R</p>
+                                    <p>Clear path</p>
+                                </div>
+                                <div className="shortcut">
+                                    <p className="key-badge">Arrows</p>
+                                    <p>Animation playback</p>
+                                </div>
+                                <button className="show-tutorial-btn" onClick={() => { setActiveStep(0); setShowTutorial(true); }}>
+                                    SHOW TUTORIAL
+                                </button>
                             </div>
-                        </div>
-
-                        <div>
-                            <Typography id="end-border-label" >
-                                Destination node border color
-                            </Typography>
-                            <div className="color-container">
-                                <MuiColorInput value={arrayToRgb(colors.endNodeBorder)} onChange={v => {setColors({...colors, endNodeBorder: rgbToArray(v)});}} aria-labelledby="end-border-label" style={{ backgroundColor: "#404156" }} />
-                                <IconButton onClick={() => {setColors({...colors, endNodeBorder: INITIAL_COLORS.endNodeBorder});}} style={{ backgroundColor: "transparent" }} size="small">
-                                    <Replay style={{ color: "#fff", width: 20, height: 20 }} fontSize="inherit" />
-                                </IconButton>
-                            </div>
-                        </div>
-
-                        <div>
-                            <Typography id="path-label" >
-                                Path color
-                            </Typography>
-                            <div className="color-container">
-                                <MuiColorInput value={arrayToRgb(colors.path)} onChange={v => {setColors({...colors, path: rgbToArray(v)});}} aria-labelledby="path-label" style={{ backgroundColor: "#404156" }} />
-                                <IconButton onClick={() => {setColors({...colors, path: INITIAL_COLORS.path});}} style={{ backgroundColor: "transparent" }} size="small">
-                                    <Replay style={{ color: "#fff", width: 20, height: 20 }} fontSize="inherit" />
-                                </IconButton>
-                            </div>
-                        </div>
-
-                        <div>
-                            <Typography id="route-label" >
-                                Shortest route color
-                            </Typography>
-                            <div className="color-container">
-                                <MuiColorInput value={arrayToRgb(colors.route)} onChange={v => {setColors({...colors, route: rgbToArray(v)});}} aria-labelledby="route-label" style={{ backgroundColor: "#404156" }} />
-                                <IconButton onClick={() => {setColors({...colors, route: INITIAL_COLORS.route});}} style={{ backgroundColor: "transparent" }} size="small">
-                                    <Replay style={{ color: "#fff", width: 20, height: 20 }} fontSize="inherit" />
-                                </IconButton>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="shortcuts-container">
-                        <Typography style={{ color: "#A8AFB3", textTransform: "uppercase", fontSize: 14 }} >
-                            Shortcuts
-                        </Typography>
-
-                        <div className="shortcut">
-                            <p>SPACE</p>
-                            <p>Start/Stop animation</p>
-                        </div>
-                        <div className="shortcut">
-                            <p>R</p>
-                            <p>Clear path</p>
-                        </div>
-                        <div className="shortcut">
-                            <p>Arrows</p>
-                            <p>Animation playback</p>
-                        </div>
-                        <Button onClick={() => {setActiveStep(0);setShowTutorial(true);}}
-                            variant="contained" style={{ backgroundColor: "#404156", color: "#fff" }}
-                        >
-                            Show tutorial
-                        </Button>
-                    </div>
+                        </AccordionDetails>
+                    </Accordion>
                 </div>
             </Drawer>
         </>
