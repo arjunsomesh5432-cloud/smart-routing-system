@@ -32,11 +32,11 @@ export async function fetchOverpassData(boundingBox) {
                 }
             });
 
-            if (response.ok) {
-                return response;
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
             }
 
-            lastError = new Error(`Endpoint ${endpoint} returned status ${response.status}`);
+            return response;
         } catch (error) {
             lastError = error;
         }
